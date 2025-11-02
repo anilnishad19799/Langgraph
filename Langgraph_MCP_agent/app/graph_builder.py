@@ -1,0 +1,57 @@
+import asyncio
+from .state import State
+from .memory_manager import memory
+from .model import get_model
+from .config import DB_URI
+from langgraph.graph import StateGraph, START
+from langgraph.prebuilt import ToolNode, tools_condition
+from langchain_core.messages import BaseMessage
+from langgraph.checkpoint.postgres import PostgresSaver
+
+
+async def call_model(state: dict):
+    model = await get_model()
+    msgs = state["messages"]
+    uid = state["mem0_user_id"]
+
+    context = ""
+    if msgs:
+        mems = memory.search(msgs[-1].content, user_id=uid, limit=2)
+        if mems["results"]:
+            context = "\n".join(f"- {m['memory']}" for m in mems["results"])
+
+    system_message = {
+        "role": "system",
+        "content": f"""
+        You are a helpful assistant.
+        Tools available:
+        1. Math tool – for calculations.
+        2. Weather tool – for weather queries.
+        Use tools only when needed; otherwise respond naturally.
+        Memory context:
+        {context}
+        """,
+    }
+
+    user_message = {"role": "user", "content": msgs[-1].content}
+    response = await model.ainvoke({"messages": [system_message, user_message]})
+
+    memory.add(
+        [
+            {"role": "user", "content": user_message["content"]},
+            {"role": "assistant", "content": response["messages"][-1].content},
+        ],
+        user_id=uid,
+    )
+
+    return {"messages": [response["messages"][-1]]}
+
+
+def build_graph(tools):
+    graph_builder = StateGraph(State)
+    graph_builder.add_node(call_model)
+    graph_builder.add_node(ToolNode(tools))
+    graph_builder.add_edge(START, "call_model")
+    graph_builder.add_conditional_edges("call_model", tools_condition)
+    graph_builder.add_edge("tools", "call_model")
+    return graph_builder

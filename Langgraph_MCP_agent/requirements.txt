@@ -1,0 +1,9 @@
+langchain
+langgraph
+langchain_mcp_adapters
+qdrant-client
+mem0
+python-dotenv
+psycopg2
+Pillow
+asyncio
