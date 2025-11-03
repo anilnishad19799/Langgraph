@@ -2,7 +2,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from langgraph.checkpoint.memory import InMemorySaver
-from langchain_core.messages import HumanMessage
+from .state import State
+
+# from langchain_core.messages import HumanMessage
+from langchain_core.messages import HumanMessage, AIMessage, BaseMessage
 from fastapi.responses import JSONResponse, FileResponse
 from pathlib import Path
 from .mcp_client import get_tools
@@ -58,14 +61,25 @@ async def get_index():
 
 @app.post("/ask")
 async def ask(req: QueryRequest):
-    state = {
-        "messages": [HumanMessage(content=req.query)],
-        "mem0_user_id": req.username,
-    }
+    # 1️⃣ Prepare an empty state, let LangGraph restore messages automatically
+    state: State = {"mem0_user_id": req.username}
+
+    # 2️⃣ Config includes thread_id for checkpointing
     config = {"configurable": {"thread_id": req.thread_id}}
-    print("config", config)
+
+    # 3️⃣ Append the current user query to messages manually in the node
+    # We'll wrap it here temporarily for clarity
+    user_message = HumanMessage(content=req.query)
+    if "messages" not in state:
+        state["messages"] = []
+    state["messages"].append(user_message)
+
+    # 4️⃣ Call the graph (async)
     result = await graph.ainvoke(state, config=config)
-    return {"response": result["messages"][-1].content}
+
+    # 5️⃣ Return the assistant's response
+    ai_msg = result["messages"][-1].content
+    return {"response": ai_msg}
 
 
 # import asyncio
