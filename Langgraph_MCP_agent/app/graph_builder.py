@@ -5,9 +5,6 @@ from .model import get_model
 from .config import DB_URI
 from langgraph.graph import StateGraph, START, END
 from langgraph.prebuilt import ToolNode, tools_condition
-from langchain_core.messages import BaseMessage
-from langgraph.checkpoint.postgres import PostgresSaver
-from langchain_core.messages import HumanMessage, AIMessage
 
 
 async def call_model(state: State):
