@@ -1,80 +1,79 @@
 # LangGraph MCP Application
 
-This repository contains a LangGraph-based project using MCP (Multi-Chain Processing) with Qdrant as the long-term vector database and Checkpointer for short-term memory. The system is built to handle conversational AI with persistent memory using threads.
+A LangGraph-based conversational AI system integrating MCP (Model Context Protocol) with Qdrant for long-term vector memory and Checkpointer for short-term memory. Built for intelligent, context-aware, and persistent dialogue management.
 
 ---
 
-## 🛠 Tech Stack
+## ⚙️ Tech Stack
 
-- LangChain & LangGraph – for building the conversational graph and agent logic  
-- MCP – Multi-Chain Processing for orchestration  
-- Memo0AI – memory management  
-- Qdrant – vector database for long-term memory  
-- Checkpointer – short-term memory  
-- FastAPI – backend API (app/main.py)  
-- Docker & Docker Compose – containerization and orchestration  
+- **LangChain / LangGraph** – conversational graph and agent logic  
+- **MCP (Model Context Protocol)** – structured context handling and orchestration  
+- **Memo0AI** – memory management interface  
+- **Qdrant** – vector database for long-term memory  
+- **Checkpointer** – manages short-term, thread-based session memory  
+- **FastAPI** – backend REST service  
+- **Docker / Docker Compose** – containerized deployment  
 
 ---
 
-## ⚙️ Environment Variables
+## 🔐 Environment Setup
 
-Create a `.env` file in the root of the project with the following keys:  
+Create a `.env` file in the project root with your API credentials:  
 OPENAI_API_KEY=<your_openai_api_key>  
 LANGSMITH_API_KEY=<your_langsmith_api_key>  
 QDRANT_URL=<your_qdrant_cloud_url>  
 QDRANT_API_KEY=<your_qdrant_api_key>  
-Note: You need to create a Qdrant Cloud instance to get the QDRANT_URL and QDRANT_API_KEY.
+Qdrant credentials can be generated from your Qdrant Cloud account.
 
 ---
 
-## 🐳 Docker Setup and Run
+## 🐳 Docker Setup
 
-Build Docker images and run containers using:  
+Build and start the services using:  
 docker-compose build  
 docker-compose up  
-This will start the FastAPI backend along with any additional services defined in docker-compose.yml.  
-Access the application by opening your browser and navigating to:  
+Once started, access the application at:  
 http://localhost:8000  
-The FastAPI app will serve your endpoints and interact with MCP, Qdrant, and Checkpointer for memory management.
+The FastAPI backend integrates MCP, Qdrant, and Checkpointer for dynamic memory-based conversation handling.
 
 ---
 
-## 📦 Running Locally Without Docker
+## 💻 Local Development (Without Docker)
 
-Create a virtual environment and activate it:  
 python -m venv venv  
 source venv/bin/activate  (for Linux/macOS)  
 venv\Scripts\activate     (for Windows)  
-Install dependencies:  
 pip install -r requirements.txt  
-Run the FastAPI app:  
 uvicorn app.main:app --reload  
+This will launch the FastAPI server locally for development and testing.
 
 ---
 
 ## 🔗 Qdrant Cloud Setup
 
-Go to Qdrant Cloud (https://cloud.qdrant.io/), create a free instance, copy your API Key and Instance URL, and add them to your `.env` file:  
+1. Visit [Qdrant Cloud](https://cloud.qdrant.io/)  
+2. Create a free instance  
+3. Copy your API key and instance URL  
+4. Add them to the `.env` file as:  
 QDRANT_URL=https://<your-instance-id>.qdrant.cloud  
-QDRANT_API_KEY=<your-api-key>  
+QDRANT_API_KEY=<your-api-key>
 
 ---
 
-## 📝 Notes
+## 🧠 Memory Architecture
 
-- Short-term memory is managed by Checkpointer threads for session-specific context  
-- Long-term memory is stored in Qdrant for persistent knowledge retrieval  
-- Ensure all API keys are valid and have correct permissions  
-- Docker Compose handles container orchestration and service dependencies  
+- **Short-term:** Checkpointer stores active session context (thread-based)  
+- **Long-term:** Qdrant persists conversation history for future retrieval  
+- **Context Management:** MCP (Model Context Protocol) bridges memory layers for coherent dialogue flow  
 
 ---
 
 ## 🚀 Contributing
 
-Feel free to open issues or submit pull requests for improvements.
+Feel free to fork, improve, and submit pull requests. Suggestions and enhancements are welcome.
 
 ---
 
 ## 📄 License
 
-This project is licensed under the MIT License.
+This project is licensed under the **MIT License**.
