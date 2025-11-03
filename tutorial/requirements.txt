@@ -1,6 +1,0 @@
-langchain
-"langgraph-cli[inmem]"
-langgraph-sdk
-langchain_core 
-langchain-anthropic 
-langgraph
