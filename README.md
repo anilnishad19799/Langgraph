@@ -62,8 +62,8 @@ uvicorn app.main:app --reload
 2. Create a free instance  
 3. Copy your API key and instance URL  
 4. Add them to the `.env` file:  
-QDRANT_URL=https://'<your-instance-id>'.qdrant.cloud  
-QDRANT_API_KEY=<your-api-key>  
+QDRANT_URL=`https://<your-instance-id>.qdrant.cloud  `
+QDRANT_API_KEY=`<your-api-key>`  
 
 ---
 
